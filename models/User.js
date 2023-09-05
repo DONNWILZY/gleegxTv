@@ -10,6 +10,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  password: {
+    type: String,
+    required: true,
+  },
   username: {
     type: String,
     unique: true,
@@ -138,13 +142,31 @@ const userSchema = new mongoose.Schema({
     financialBackground: String,
     familyBackground: String,
   },
-  redFlags: [String],
-  dealBreaker: [String],
-  dislikes: [String],
-  likes: [String],
-  expectations: [String],
-  yourKindOfPartner: String,
-  yourIdealPartner: String,
+  redFlags:{
+   type: [String]
+  } ,
+  
+  dealBreaker: {
+    type: [String]
+  },
+  dislikes: {
+    type: [String]
+  },
+
+  likes: {
+    type: [String]
+  },
+  expectations: {
+    type: [String]
+  },
+
+  yourKindOfPartner: {
+    type: [String]
+  },
+  
+  yourIdealPartner: {
+    type: [String]
+  },
   profilePhotos: [
     {
       url: String,
@@ -183,7 +205,10 @@ const userSchema = new mongoose.Schema({
     },
   ],
 
-});
+},
+//////// TIME STAMPS -- CREATED AT AND UPDATED //////
+{ timestamps: true }
+);
 
 // Create the User model
 const User = mongoose.model('User', userSchema);

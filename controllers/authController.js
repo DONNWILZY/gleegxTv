@@ -1,5 +1,5 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 //const { v4: uuidv4 } = require("uuid");
 const User = require("../models/User");
 const OTPCode = require("../models/OtpCode");
@@ -131,9 +131,108 @@ const generateOTPCode = () => {
   };
 
 
-  const authController = {
-    registerUser
   
+
+  //////////SIGN-IN USER
+  const loginUser = async (req, res, next) => {
+    try {
+      const { username, email, password } = req.body;
+  
+      // Check if either username or email is provided
+      if (!username && !email) {
+        return res.status(400).json({
+          status: "failed",
+          message: "Username or Email field is required",
+        });
+      }
+  
+      let user;
+  
+      // Find the user based on the provided credentials
+      if (email) {
+        user = await User.findOne({ email });
+      } else if (username) {
+        user = await User.findOne({ username });
+      }
+  
+      // Check if a user with the provided credentials exists
+      if (!user) {
+        return res.status(404).json({
+          status: "failed",
+          message: "User not found",
+        });
+      }
+  
+      // Validate the provided password
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+  
+      if (!isPasswordValid) {
+        return res.status(400).json({
+          status: "failed",
+          message: "Invalid password",
+        });
+      }
+  
+      // Check if the user's email is verified
+      if (!user.verifiedEmail) {
+        return res.status(400).json({
+          status: "failed",
+          message: "Please verify your email before signing in",
+        });
+      }
+  
+      // Set the user's activeStatus to "online"
+      user.activeStatus = "online";
+      await user.save();
+  
+      // Create a user details object with the desired fields
+      const userDetails = {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        activeStatus: user.activeStatus,
+        gender: user.gender,
+        dob: user.dob,
+        relationshipStatus: user.relationshipStatus,
+        placeOfOrigin: user.placeOfOrigin,
+        resident: user.resident,
+        academic: user.academic,
+        employment: user.employment,
+        interestedIn: user.interestedIn,
+        lookingFor: user.lookingFor,
+        bio: user.bio,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      };
+  
+      // Create a JWT token for authentication
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SEC_KEY, {
+        expiresIn: "24h",
+      });
+  
+      return res.status(200).json({
+        status: "success",
+        message: "Successfully signed in",
+        token,
+        user: userDetails,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "failed",
+        message: "Internal server error",
+      });
+    }
+  };
+  
+  
+  const authController = {
+    loginUser,
+    registerUser
   };
   
   module.exports = authController;
