@@ -1,0 +1,31 @@
+{
+  "name": "gleegxtv",
+  "version": "1.0.0",
+  "description": "GLEEGX TV CONTENT APP",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DONNWILZY/gleegxTv.git"
+  },
+  "keywords": [
+    "content",
+    "blogging",
+    "contet",
+    "blind",
+    "blind",
+    "date",
+    "voting"
+  ],
+  "author": "EFFIONG GODSWILL",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DONNWILZY/gleegxTv/issues"
+  },
+  "homepage": "https://github.com/DONNWILZY/gleegxTv#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
