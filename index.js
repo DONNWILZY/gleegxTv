@@ -9,10 +9,13 @@ const PORT = process.env.PORT || 5000
 app.use(express.json());
 
 // Import routes
-const authRoute = require('./routes/authRoute');
+const authRoute = require('./routes/authRoute',);
+const updateUserRoute = require('./routes/updateUserRoute');
 
 // Routes middlewares
 app.use('/api/auth', authRoute);
+app.use('/api/updateUser', updateUserRoute);
+
 
 
 ////// URL FOR THE PROJECT
