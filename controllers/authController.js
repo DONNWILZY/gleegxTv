@@ -487,7 +487,124 @@ const generateOTPCode = () => {
     }
   };
   
+
+  //////// VERIFY PSSWORD RESET OTP
+  const verifyPasswordOtp = async (req, res) => {
+    const { userId, email, otpCode } = req.body;
   
+    try {
+      // Find the user by email or userId
+      const user = await User.findOne({ $or: [{ email }, { _id: userId }] });
+  
+      if (!user) {
+        return res.status(404).json({
+          status: 'failed',
+          message: 'User not found. Please enter a valid email address or userId.',
+        });
+      }
+  
+      // Find the OTP code record associated with the user
+      const otpCodeRecord = await OTPCode.findOne({ userId: user._id, code: otpCode });
+  
+      if (!otpCodeRecord) {
+        return res.status(400).json({
+          status: 'failed',
+          message: 'Invalid OTP code. Please enter the correct code.',
+        });
+      }
+  
+      // Check if the OTP code has expired
+      if (otpCodeRecord.expiresAt < Date.now()) {
+        // If the OTP code has expired, delete the OTP record and inform the user
+        await OTPCode.deleteOne({ userId: user._id });
+  
+        return res.status(400).json({
+          status: 'failed',
+          message: 'OTP code has expired. Please request a new one.',
+        });
+      }
+  
+      // If the OTP code is valid and not expired, proceed with the reset password flow
+      return res.status(200).json({
+        status: 'success',
+        message: 'Valid OTP code. You can now proceed to reset your password.',
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 'failed',
+        message: 'An error occurred while processing your request.',
+      });
+    }
+  };
+  
+  ////// CHANGE BPASSWORD 
+  const newPassword = async (req, res) => {
+    const { email, username, phoneNumber, newPassword } = req.body;
+  
+    try {
+      // Find the user by email, username, or phoneNumber
+      const user = await User.findOne({
+        $or: [
+          { email },
+          { username },
+          { phoneNumber },
+        ],
+      });
+  
+      if (!user) {
+        return res.status(404).json({
+          status: 'failed',
+          message: 'User not found. Please enter a valid email, username, or phone number.',
+        });
+      }
+  
+      // Check if the user has a valid OTP code record (OTP code has been verified)
+      const otpCodeRecord = await OTPCode.findOne({ userId: user._id });
+  
+      if (!otpCodeRecord) {
+        return res.status(400).json({
+          status: 'failed',
+          message: 'OTP verification is required before resetting the password.',
+        });
+      }
+  
+      // Check if the OTP code has expired
+      if (otpCodeRecord.expiresAt < Date.now()) {
+        // If the OTP code has expired, delete the OTP record and inform the user
+        await OTPCode.deleteOne({ userId: user._id });
+  
+        return res.status(400).json({
+          status: 'failed',
+          message: 'OTP code has expired. Please request a new one.',
+        });
+      }
+  
+      // If the OTP code is valid and not expired, proceed with updating the password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+      // Update the user's password
+      await User.updateOne({ _id: user._id }, { password: hashedPassword });
+  
+      // Delete the OTP record
+      await OTPCode.deleteOne({ userId: user._id });
+  
+      return res.status(200).json({
+        status: 'success',
+        message: 'Password reset successful. You can now log in with your new password.',
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 'failed',
+        message: 'An error occurred while processing your request.',
+      });
+    }
+  };
+  
+  
+   
   const authController = {
     loginUser,
     registerUser,
@@ -495,6 +612,8 @@ const generateOTPCode = () => {
     verifyOTP,
     changePassword,
     resetPassword,
+    verifyPasswordOtp,
+    newPassword
   };
   
   module.exports = authController;

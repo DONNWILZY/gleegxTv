@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 //const validateFileds = require('../validator/validate');
-const {registerUser, loginUser, requestOTP, verifyOTP, changePassword, resetPassword} = require('../controllers/authController');
+const {registerUser, loginUser, requestOTP, verifyOTP, changePassword, resetPassword, verifyPasswordOtp, newPassword} = require('../controllers/authController');
 const {verifyToken, verifyUser, verifyAdmin, verifyModerator, } = require('../middleWare/authMiddleWare')
 
 router.get('/', (req, res)=>{
@@ -25,7 +25,15 @@ router.post('/verifyotp', verifyOTP);
 router.put('/changePassword', verifyToken, changePassword);
 
 ////////RESET PASSWORD restPassword
-router.post('/resetPassword',  resetPassword);
+router.post('/resetPasswordRequest',  resetPassword);
+
+//////// VERIFY PASSWORD RESET OTP verifyPasswordOtp
+router.post('/verifyPasswordOTP',  verifyPasswordOtp);
+
+////// new pssword newPassword
+router.put('/newPassword',  newPassword);
+
+
 
 
 
