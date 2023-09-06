@@ -417,6 +417,76 @@ const generateOTPCode = () => {
     }
   };
   
+
+  //////// RESET PASSWORD 
+  const resetPassword = async (req, res) => {
+    const { identifier } = req.body;
+  
+    try {
+      // Check if the provided identifier is an email, username, or phone number
+      const user = await User.findOne({
+        $or: [
+          { email: identifier },
+          { username: identifier },
+          { phoneNumber: identifier },
+        ],
+      });
+  
+      if (!user) {
+        return res.status(404).json({
+          status: 'failed',
+          message: 'User not found. Please enter a valid email, username, or phone number.',
+        });
+      }
+  
+      // Generate OTP code
+      const otpCode = generateOTPCode();
+  
+      // Set the expiration time to 10 minutes from now
+      const expirationTime = new Date(Date.now() + 10 * 60 * 1000);
+  
+      // Save the OTP code record in the database
+      const otpCodeRecord = new OTPCode({
+        userId: user._id,
+        code: otpCode,
+        createdAt: Date.now(),
+        expiresAt: expirationTime,
+      });
+      await otpCodeRecord.save();
+  
+      // Send OTP code to user's email
+      const mailOptions = {
+        from: process.env.AUTH_EMAIL,
+        to: user.email,
+        subject: 'Password Reset OTP',
+        html: `
+          <h1>Password Reset OTP</h1>
+          <p><strong>${otpCode}</strong></p>
+          <p>Please enter the OTP code to reset your password.</p>
+        `,
+      };
+  
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+  
+      return res.status(200).json({
+        status: 'success',
+        message: 'OTP code has been sent to your email. Please check your inbox.',
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        status: 'failed',
+        message: 'An error occurred while processing your request.',
+      });
+    }
+  };
+  
   
   const authController = {
     loginUser,
@@ -424,6 +494,7 @@ const generateOTPCode = () => {
     requestOTP,
     verifyOTP,
     changePassword,
+    resetPassword,
   };
   
   module.exports = authController;
