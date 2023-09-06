@@ -48,13 +48,14 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['isUser', 'isAdmin', 'isModerator'],
-    default: 'isUser',
+    default: 'isAdmin',
   },
   relationshipStatus: {
     type: String,
     enum: ['single', 'divorced', 'departed', 'married'],
   },
  
+
   placeOfOrigin: {
     town: String,
     state: String,
@@ -204,6 +205,25 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
+
+   // createdBy field as an array of objects
+   createdBy: [
+    {
+      admin: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      firstName: String,
+      lastName: String,
+      content: String,
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
+
+ 
 
 },
 //////// TIME STAMPS -- CREATED AT AND UPDATED //////

@@ -9,12 +9,18 @@ const PORT = process.env.PORT || 5000
 app.use(express.json());
 
 // Import routes
+
 const authRoute = require('./routes/authRoute',);
 const updateUserRoute = require('./routes/updateUserRoute');
+const userRoute = require('./routes/userRoute');
+const adminRoute = require('./routes/adminRoute');
+
 
 // Routes middlewares
 app.use('/api/auth', authRoute);
 app.use('/api/updateUser', updateUserRoute);
+app.use('/api/user', updateUserRoute);
+app.use('/api/admin', adminRoute);
 
 
 
@@ -24,7 +30,7 @@ const liveUrl =  `${process.env.currentUrl}:${PORT}`
 const currentUrl = liveUrl ||  prodUrl  ;
 
 //// DATABSE URL local: process.env.MONGODB_URI ||| cloud:process.env.databaseUrl 
-const dbUrl =  process.env.databaseUrl ||  process.env.MONGODB_URI;
+const dbUrl =  /*process.env.databaseUrl || */ process.env.MONGODB_URI;
 
 
 // Database connection

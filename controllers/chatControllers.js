@@ -10,9 +10,9 @@ const User = require ('../models/User');
 
 
 
-const userController = {
+const chatControllers = {
     
 
   };
 
-  module.exports = userController;
+  module.exports = chatControllers;
