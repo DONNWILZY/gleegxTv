@@ -13,10 +13,14 @@ const { updateUser,
     addHighSchool
 } = require('../controllers/updateUserController')
 
-
 const {verifyToken, verifyUser, verifyAdmin, verifyModerator, } = require('../middleWare/authMiddleWare')
 //const {validate} = require('../validator/validate') ////registerValidator
 //const authValidator = require('../validator/authValidator,js')
+
+router.get('/', (req, res)=>{
+    res.send('ALL  THE USER UPDATE HAPPENING HERE. WHAT EVER YOU ARE UPDATING, INCLUDING YOUR LIFE. LOL')
+})
+
 
 ////// UPDATE ENTIRE PROFILE
 router.put('/allInfo', verifyToken, verifyUser, updateUser);

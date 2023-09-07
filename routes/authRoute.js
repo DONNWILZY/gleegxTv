@@ -5,7 +5,7 @@ const {registerUser, loginUser, requestOTP, verifyOTP, changePassword, resetPass
 const {verifyToken, verifyUser, verifyAdmin, verifyModerator, } = require('../middleWare/authMiddleWare')
 
 router.get('/', (req, res)=>{
-    res.send(' running here');
+    res.send('YOU GO FILL FORM TIRE. LOL. EVERUTHING AUTH DEH HERE')
 })
 
 // User registration route registerUser

@@ -14,7 +14,21 @@ const authRoute = require('./routes/authRoute',);
 const updateUserRoute = require('./routes/updateUserRoute');
 const userRoute = require('./routes/userRoute');
 const adminRoute = require('./routes/adminRoute');
-const ConnectRoute = require('./routes/connectRoute')
+const ConnectRoute = require('./routes/connectRoute');
+const blogRoute = require('./routes/blogRoute');
+const anonyStory = require('./routes/anonymousStoryRoute');
+const chatRoute = require('./routes/chatRoute');
+const anonyMessage = require('./routes/anonymousMessage');
+const storyRoute = require('./routes/storiesRoute');
+const meetSomeOne = require('./routes/meetSomeOneRoute');
+const blindDateRoute = require('./routes/blindDateRoute');
+const contentRoute = require('./routes/contentRoute');
+const votingRoute = require('./routes/votingRoute');
+const supportRoute = require('./routes/supportRoute');
+const pitchDeckRoute = require('./routes/pitchDeckRoute');
+const awardRoute = require('./routes/awardRoute');
+const adsRoute = require('./routes/adsRoute');
+
 
 
 // Routes middlewares
@@ -23,6 +37,20 @@ app.use('/api/updateUser', updateUserRoute);
 app.use('/api/user', updateUserRoute);
 app.use('/api/admin', adminRoute);
 app.use('/api/connect', ConnectRoute);
+app.use('/api/blog', blogRoute);
+app.use('/api/annystories', anonyStory);
+app.use('/api/chat', chatRoute);
+app.use('/api/anonymous', anonyMessage);
+app.use('/api/stories', storyRoute);
+app.use('/api/meetpeople', meetSomeOne);
+app.use('/api/blinddate', blindDateRoute);
+app.use('/api/content', contentRoute);
+app.use('/api/vote', votingRoute);
+app.use('/api/support', supportRoute);
+app.use('/api/pitchdeck', pitchDeckRoute);
+app.use('/api/award', awardRoute);
+app.use('/api/advert', adsRoute);
+
 
 
 

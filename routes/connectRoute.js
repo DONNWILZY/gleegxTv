@@ -5,7 +5,7 @@ const { verifyAdmin, verifyUser, verifyToken, verifyModerator } = require('../mi
 
 
 router.get('/', (req, res)=>{
-    res.send('connect  ROUTE GOING THROUGH FOLLOWE , UNFOLLOWE')
+    res.send('connect  ROUTE GOING THROUGH FOLLOW , UNFOLLOWE')
 })
 
 

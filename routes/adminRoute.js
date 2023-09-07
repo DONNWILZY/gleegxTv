@@ -5,7 +5,7 @@ const {verifyToken, verifyUser, verifyAdmin, verifyModerator, } = require('../mi
 
 
 router.get('/', (req, res)=>{
-    res.send('USER ROUTE GOING THROUGH')
+    res.send('ADMIN AREA.... KEEP OFF')
 })
 
 ////// ADMIN TO ADD USERS addAdminUser
