@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['isUser', 'isAdmin', 'isModerator'],
-    default: 'isAdmin',
+    default: 'isUser',
   },
   relationshipStatus: {
     type: String,
@@ -192,6 +192,7 @@ const userSchema = new mongoose.Schema({
       ref: 'User',
     },
   ],
+
   messages: [
     {
       from: {

@@ -14,6 +14,7 @@ const authRoute = require('./routes/authRoute',);
 const updateUserRoute = require('./routes/updateUserRoute');
 const userRoute = require('./routes/userRoute');
 const adminRoute = require('./routes/adminRoute');
+const ConnectRoute = require('./routes/connectRoute')
 
 
 // Routes middlewares
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoute);
 app.use('/api/updateUser', updateUserRoute);
 app.use('/api/user', updateUserRoute);
 app.use('/api/admin', adminRoute);
+app.use('/api/connect', ConnectRoute);
 
 
 
