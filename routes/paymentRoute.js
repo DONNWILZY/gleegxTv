@@ -7,7 +7,7 @@ const {verifyToken, verifyUser, verifyAdmin, verifyModerator, } = require('../mi
 
 
 router.get('/', (req, res)=>{
-    res.send('our voting will be happening here. we can vote ideas, vote performances')
+    res.send('PYMENT')
 })
 
 

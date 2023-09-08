@@ -23,11 +23,15 @@ const storyRoute = require('./routes/storiesRoute');
 const meetSomeOne = require('./routes/meetSomeOneRoute');
 const blindDateRoute = require('./routes/blindDateRoute');
 const contentRoute = require('./routes/contentRoute');
-const votingRoute = require('./routes/votingRoute');
+const pollRoute = require('./routes/pollRoute');
 const supportRoute = require('./routes/supportRoute');
 const pitchDeckRoute = require('./routes/pitchDeckRoute');
 const awardRoute = require('./routes/awardRoute');
 const adsRoute = require('./routes/adsRoute');
+const businessPageRoute = require('./routes/businessPage');
+const paymentRoute = require('./routes/paymentRoute');
+const subscriptionRoute = require('./routes/subscriptionRoute');
+
 
 
 
@@ -45,11 +49,14 @@ app.use('/api/stories', storyRoute);
 app.use('/api/meetpeople', meetSomeOne);
 app.use('/api/blinddate', blindDateRoute);
 app.use('/api/content', contentRoute);
-app.use('/api/vote', votingRoute);
+app.use('/api/vote', pollRoute);
 app.use('/api/support', supportRoute);
 app.use('/api/pitchdeck', pitchDeckRoute);
 app.use('/api/award', awardRoute);
 app.use('/api/advert', adsRoute);
+app.use('/api/business', businessPageRoute);
+app.use('/api/payment', paymentRoute); 
+app.use('/api/subscrition', subscriptionRoute); 
 
 
 
