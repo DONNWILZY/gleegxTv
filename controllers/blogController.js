@@ -1,39 +1,64 @@
-const { Blog, Comment } = require('./models/blogs');
+const { Blog, Comment } = require('../models/blog');
 const User = require('../models/User');
 
 // Create a Blog Post (Only for admin and moderator)
 const createBlogPost = async (req, res) => {
-  const { title, content, author, publicationStatus } = req.body;
-  // Check if the user is an admin or moderator
-  if (req.user.role !== 'isAdmin' && req.user.role !== 'isModerator') {
-    return res.status(403).json({
-      status: 'failed',
-      message: 'Only admin and moderator can create blog posts.',
-    });
-  }
-
-  try {
-    const blog = new Blog({
-      title,
-      content,
-      author,
-      publicationStatus,
-      postedBy: req.user.userId, // Store the user ID of the creator
-    });
-    await blog.save();
-    return res.status(201).json({
-      status: 'success',
-      message: 'Blog post created successfully.',
-      blog,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: 'failed',
-      message: 'An error occurred while creating the blog post.',
-    });
-  }
-};
+    const { title, content, author, publicationStatus,featuredImage, tags, summary, canonicalUrl, metaDescription , isPopular, isTrending, featured} = req.body;
+    const userId = req.params.userId; // Get the userId from the route params 
+    
+    
+  
+    try {
+      // Fetch the user to check their role
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({
+          status: 'failed',
+          message: 'User not found.',
+        });
+      }
+  
+      // Check if the user is an admin or moderator
+      if (user.role !== 'isAdmin' && user.role !== 'isModerator') {
+        return res.status(403).json({
+          status: 'failed',
+          message: 'Only admin and moderator can create blog posts.',
+        });
+      }
+  
+      const blog = new Blog({
+        title,
+        featuredImage,
+        content,
+        author,
+        tags,
+        summary,
+        metaDescription,
+        canonicalUrl,
+        isPopular,
+        isTrending,
+        featured,        
+        publicationStatus,
+        postedBy: userId, // Store the user ID of the creator
+      });
+  
+      await blog.save();
+  
+      return res.status(201).json({
+        status: 'success',
+        message: 'Blog post created successfully.',
+        blog,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: 'failed',
+        message: 'An error occurred while creating the blog post.',
+      });
+    }
+  };
+  
 
 // Create a Comment on a Blog Post
 const createComment = async (req, res) => {
@@ -109,3 +134,13 @@ const createReply = async (req, res) => {
 };
 
 // More routes and functionality can be added based on the requirements.
+
+
+const blogController = {
+    createBlogPost,
+    createComment,
+    createReply
+
+  };
+
+  module.exports = blogController;

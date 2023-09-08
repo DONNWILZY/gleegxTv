@@ -117,9 +117,9 @@ const blogSchema = new mongoose.Schema({
       ref: 'Comment',
     },
   ],
-  likes: {
-    type: Number,
-  },
+//   likes: {
+//     type: Number,
+//   },
   views: {
     type: Number,
   },
@@ -146,9 +146,7 @@ const blogSchema = new mongoose.Schema({
   isTrending: {
     type: Boolean,
   },
-  lastName: {
-    type: String,
-  },
+  
   dateTime: {
     type: Date,
     default: Date.now,

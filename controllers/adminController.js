@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
-//const createError = require ('../utilities/createError');
+const bcrypt = require('bcrypt');
+//const createError = require ('../utilities/');
 const User = require ('../models/User');
 const transporter = require('../utilities/transporter'); // Import your nodemailer transporter
 
@@ -30,6 +31,10 @@ const addUserByAdmin = async (req, res) => {
       role,
     } = req.body;
 
+    // Hash the password using bcrypt
+    const saltRounds = 10; // Adjust the number of salt rounds as needed
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     // Create a new user with the provided data
     const newUser = new User({
       firstName,
@@ -37,7 +42,7 @@ const addUserByAdmin = async (req, res) => {
       email,
       verifiedEmail,
       phoneNumber,
-      password,
+      password: hashedPassword, // Use the hashed password
       username,
       role,
       createdBy: [
@@ -52,7 +57,6 @@ const addUserByAdmin = async (req, res) => {
 
     // Save the new user to the database
     await newUser.save();
-    
 
     // Send an email for email verification
     const mailOptions = {
