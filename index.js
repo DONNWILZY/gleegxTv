@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
+const cors = require('cors');
+app.use(cors());
 const mongoose  = require('mongoose');
 const http = require('http');
 dotenv.config();
@@ -92,6 +94,6 @@ app.get('/', (req, res) => {
 });
 
 
-app.listen(3000, () => {
+app.listen(5000, () => {
   console.log('Server started on port 3000');
 });
