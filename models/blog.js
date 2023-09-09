@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const reactionSchema = new mongoose.Schema({
+   objectId: {
+    type: mongoose.Types.ObjectId,
+    //required: true,
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -26,11 +30,15 @@ const reactionSchema = new mongoose.Schema({
 );
 
 const commentSchema = new mongoose.Schema({
+  objectId: {
+    type: mongoose.Types.ObjectId,
+    //required: true,
+  },
     text: {
         type: String,
         required: true,
       },
-      author: {
+      PostAuthor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
@@ -39,18 +47,18 @@ const commentSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
       },
-      post: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Blog',
-       required: true,
-      },
+      // post: {
+      //   type: mongoose.Schema.Types.ObjectId,
+      //   ref: 'Blog',
+      //  required: true,
+      // },
       commentedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
        required: true,
       },
   replies: [
-    {
+       {
       text: {
         type: String,
        required: true,
@@ -59,7 +67,7 @@ const commentSchema = new mongoose.Schema({
         type: String,
        // required: true,
       },
-      author: {
+      commentAuthor: {
         type: mongoose.Schema.Types.ObjectId, // Reference to the User model
         ref: 'User', // Reference the 'User' model
         //required: true,
@@ -85,6 +93,10 @@ const commentSchema = new mongoose.Schema({
 );
 
 const blogSchema = new mongoose.Schema({
+  objectId: {
+    type: mongoose.Types.ObjectId,
+  // required: true,
+  },
   title: {
     type: String,
     required: true,
@@ -152,8 +164,8 @@ const blogSchema = new mongoose.Schema({
   },
   publicationStatus: {
     type: String,
-    enum: ['APPROVED', 'DECLINED', 'PENDING'],
-    default: 'PENDING',
+    enum: ['approved', 'declined', 'pending'],
+    default: 'pending',
   },
   featured: {
     type: Boolean,
@@ -181,6 +193,34 @@ const blogSchema = new mongoose.Schema({
 { timestamps: true }
 
 );
+// Virtual property to count the total number of reactions for the entire blog post
+blogSchema.virtual('totalBlogReactionsAndViews').get(function() {
+  // Count reactions for the blog post itself
+  const blogPostReactions = this.reactions.length;
+
+  // Count reactions for comments
+  const commentReactions = this.comments.reduce((total, comment) => {
+    return total + comment.reactions.length;
+  }, 0);
+
+  // Count reactions for replies
+  const replyReactions = this.comments.reduce((total, comment) => {
+    return total + comment.replies.reduce((replyTotal, reply) => {
+      return replyTotal + reply.reactions.length;
+    }, 0);
+  }, 0);
+
+  // Add the total number of views
+  const totalViews = this.views || 0;
+
+  return {
+    totalReactions: blogPostReactions + commentReactions + replyReactions,
+    totalViews: totalViews,
+  };
+});
+
+
+
 
 const Blog = mongoose.model('Blog', blogSchema);
 const Comment = mongoose.model('Comment', commentSchema);
