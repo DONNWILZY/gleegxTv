@@ -119,7 +119,7 @@ const createReply = async (req, res) => {
       const reply = {
         text,
         author: req.user.userId, // Store the user ID of the reply creator
-        comment: comment._id, // Store the comment ID
+        comment, // Remove the 'comment' property
         post: comment.post, // Store the associated blog post ID
         repliedBy: req.user.userId, // Store the user who replied
       };
@@ -128,10 +128,15 @@ const createReply = async (req, res) => {
       comment.replies.push(reply);
       await comment.save();
   
+      // Get the newly created reply's _id
+      const replyId = reply._id;
+  
+      // Return the reply and replyId in the response
       return res.status(201).json({
         status: 'success',
         message: 'Reply created successfully.',
         reply,
+        replyId, // Include replyId in the response
       });
     } catch (error) {
       console.error(error);
@@ -141,6 +146,7 @@ const createReply = async (req, res) => {
       });
     }
   };
+  
 
 
     /// REACTION TO POST
@@ -187,83 +193,90 @@ async function addReactionToBlog(blogId, userId, reactionType) {
   }
   
     /////// REACTION TO COMMENT
-  const addReactionToComment = async (commentId, userId, type) => {
-    try {
-      // Find the comment
-      const comment = await Comment.findById(commentId);
-  
-      if (!comment) {
-        return { success: false, message: 'Comment not found.' };
+    async function addReactionToComment(commentId, userId, reactionType) {
+        try {
+          // Validate ObjectIDs
+          if (!mongoose.Types.ObjectId.isValid(commentId) || !mongoose.Types.ObjectId.isValid(userId)) {
+            throw new Error('Invalid ObjectID');
+          }
+      
+          // Find the comment by its ID
+          const comment = await Comment.findById(commentId);
+      
+          if (!comment) {
+            throw new Error('Comment not found');
+          }
+      
+          // Check if the user has already reacted to this comment
+          const existingReaction = comment.reactions.find(
+            reaction => reaction.userId === userId
+          );
+      
+          if (existingReaction) {
+            // If the user has already reacted, update the reaction type
+            existingReaction.type = reactionType;
+          } else {
+            // If the user has not reacted yet, create a new reaction object
+            comment.reactions.push({
+              userId,
+              reactionType,
+              contentId: commentId,
+              contentType: 'Comment', // Set the content type to 'Comment'
+            });
+          }
+      
+          // Save the updated comment
+          await comment.save();
+      
+          return comment;
+        } catch (error) {
+          throw new Error(`Error adding reaction to comment: ${error.message}`);
+        }
       }
-  
-      // Check if the user already reacted to this comment
-      const existingReaction = comment.reactions.find(
-        (reaction) => reaction.userId.toString() === userId.toString()
-      );
-  
-      if (existingReaction) {
-        return { success: false, message: 'You already reacted to this comment.' };
-      }
-  
-      // Create a new reaction and add it to the comment
-      const newReaction = {
-        userId,
-        type, // 'like' or 'dislike'
-        contentType: 'Comment',
-        contentId: commentId,
-      };
-  
-      comment.reactions.push(newReaction);
-  
-      // Save the updated comment
-      await comment.save();
-  
-      return { success: true, message: 'Reaction added to the comment.' };
-    } catch (error) {
-      console.error(error);
-      return { success: false, message: 'An error occurred while adding the reaction.' };
-    }
-  };
 
 
   //// REACTION TO REPLY 
-  const addReactionToReply = async (replyId, userId, type) => {
-    try {
-      // Find the reply
-      const reply = await Comment.findById(replyId);
-  
-      if (!reply) {
-        return { success: false, message: 'Reply not found.' };
-      }
-  
-      // Check if the user already reacted to this reply
-      const existingReaction = reply.reactions.find(
-        (reaction) => reaction.userId.toString() === userId.toString()
-      );
-  
-      if (existingReaction) {
-        return { success: false, message: 'You already reacted to this reply.' };
-      }
-  
-      // Create a new reaction and add it to the reply
-      const newReaction = {
-        userId,
-        type, // 'like' or 'dislike'
-        contentType: 'Reply',
-        contentId: replyId,
-      };
-  
-      reply.reactions.push(newReaction);
-  
-      // Save the updated reply
-      await reply.save();
-  
-      return { success: true, message: 'Reaction added to the reply.' };
-    } catch (error) {
-      console.error(error);
-      return { success: false, message: 'An error occurred while adding the reaction.' };
+  // Define a function to add a reaction to a reply
+async function addReactionToReply(replyId, userId, reactionType) {
+  try {
+    // Validate ObjectIDs
+    if (!mongoose.Types.ObjectId.isValid(replyId) || !mongoose.Types.ObjectId.isValid(userId)) {
+      throw new Error('Invalid ObjectID');
     }
-  };
+
+    // Find the reply by its ID
+    const reply = await Comment.findById(replyId);
+
+    if (!reply) {
+      throw new Error('Reply not found');
+    }
+
+    // Check if the user has already reacted to this reply
+    const existingReaction = reply.reactions.find(
+      (reaction) => reaction.userId.toString() === userId.toString()
+    );
+
+    if (existingReaction) {
+      // If the user has already reacted, update the reaction type
+      existingReaction.type = reactionType;
+    } else {
+      // If the user has not reacted yet, create a new reaction object
+      reply.reactions.push({
+        userId: userId,
+        type: reactionType,
+        contentId: replyId,
+        contentType: 'Reply', // Set the content type to 'Reply'
+      });
+    }
+
+    // Save the updated reply
+    await reply.save();
+
+    return reply;
+  } catch (error) {
+    throw new Error(`Error adding reaction to reply: ${error.message}`);
+  }
+}
   
   
 

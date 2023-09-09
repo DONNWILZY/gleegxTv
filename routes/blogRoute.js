@@ -36,12 +36,35 @@ router.post('/post/reaction', async (req, res) => {
   });
 
 
-router.post('/post/reaction', addReactionToBlog);
 
 //// REACT TO COMMENT
-router.post('/comment/reaction/:commentId', verifyToken,  addReactionToComment);
+router.post('/comment/reaction', async (req, res) => {
+    const { commentId, userId, reactionType } = req.body;
+  
+    try {
+      const updatedComment = await addReactionToComment(commentId, userId, reactionType);
+      res.status(200).json({ message: 'Reaction added to comment successfully', comment: updatedComment });
+    } catch (error) {
+      console.error('Error adding reaction to comment:', error.message);
+      res.status(500).json({ error: 'An error occurred while adding the reaction to comment' });
+    }
+  });
 
 // REACT TO REPLY
+router.post('/reply/reaction', async (req, res) => {
+    try {
+      const { replyId, userId, reactionType } = req.body;
+  
+      // Call the function to add a reaction to the reply
+      const updatedReply = await addReactionToReply(replyId, userId, reactionType);
+  
+      // Return a success response with the updated reply
+      res.status(200).json({ message: 'Reaction added to reply', reply: updatedReply });
+    } catch (error) {
+      // Handle any errors and return an error response
+      res.status(500).json({ error: error.message });
+    }
+  });
 
 
 

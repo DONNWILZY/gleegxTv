@@ -42,27 +42,27 @@ const commentSchema = new mongoose.Schema({
       post: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Blog',
-        required: true,
+       required: true,
       },
       commentedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
+       required: true,
       },
   replies: [
     {
       text: {
         type: String,
-        required: true,
+       required: true,
       },
-    //   image: {
-    //     type: String,
-    //     required: true,
-    //   },
+      image: {
+        type: String,
+       // required: true,
+      },
       author: {
         type: mongoose.Schema.Types.ObjectId, // Reference to the User model
         ref: 'User', // Reference the 'User' model
-        required: true,
+        //required: true,
       },
 
       repliedBy: {
@@ -71,18 +71,7 @@ const commentSchema = new mongoose.Schema({
         //required: true,
       },
 
-      comment: {
-        type: mongoose.Schema.Types.ObjectId, // Reference to the User model
-        ref: 'Comment', // Reference the 'Comment' model
-       // required: true,
-      },
-      post: {
-        type: mongoose.Schema.Types.ObjectId, // Reference to the User model
-        ref: 'Blog', // Reference the 'blog' model
-       // required: true,
-      },
-
-      date: {
+         date: {
         type: Date,
         default: Date.now,
       },

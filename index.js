@@ -51,7 +51,7 @@ app.use('/api/stories', storyRoute);
 app.use('/api/meetpeople', meetSomeOne);
 app.use('/api/blinddate', blindDateRoute);
 app.use('/api/content', contentRoute);
-app.use('/api/vote', pollRoute);
+app.use('/api/poll', pollRoute);
 app.use('/api/support', supportRoute);
 app.use('/api/pitchdeck', pitchDeckRoute);
 app.use('/api/award', awardRoute);
